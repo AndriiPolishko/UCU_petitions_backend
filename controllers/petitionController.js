@@ -20,6 +20,25 @@ const getPetition = asyncHandler(async (req, res) => {
   res.status(200).json({ petition });
 });
 
+const getPetitionsInProcess = asyncHandler(async (req, res) => {
+  const sortType = req.query.sort;
+  let petitions;
+  if (sortType === 'date') {
+    petitions = await Petition.find({
+      $expr: { $gt: ['$votes', '$votesNeeded'] },
+    }).sort('date');
+  } else if (sortType === 'vote') {
+    petitions = await Petition.find({
+      $expr: { $gt: ['$votes', '$votesNeeded'] },
+    }).sort({
+      votes: -1,
+    });
+  } else {
+    throw new Error('The type of sort is incorrect');
+  }
+  res.status(200).json({ petitions });
+});
+
 const addPetition = asyncHandler(async (req, res) => {
   const {
     name,
@@ -100,6 +119,7 @@ const deletePetition = asyncHandler(async (req, res) => {
 module.exports = {
   getPetitions,
   getPetition,
+  getPetitionsInProcess,
   addPetition,
   updatePetition,
   deletePetition,

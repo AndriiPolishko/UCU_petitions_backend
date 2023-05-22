@@ -19,6 +19,10 @@ const petitionSchema = mongoose.Schema({
   },
   votes: { type: Number },
   votesNeeded: { type: Number, required: [true, 'Enter a short description'] },
+  answer: {
+    author: String,
+    text: String,
+  },
   voters: [
     {
       type: String,
