@@ -2,7 +2,15 @@ const asyncHandler = require('express-async-handler');
 const Petition = require('../models/petition');
 
 const getPetitions = asyncHandler(async (req, res) => {
-  const petitions = await Petition.find();
+  const sortType = req.query.sort;
+  let petitions;
+  if (sortType === 'date') {
+    petitions = await Petition.find().sort('date');
+  } else if (sortType === 'vote') {
+    petitions = await Petition.find().sort({ votes: -1 });
+  } else {
+    throw new Error('The type of sort is incorrect');
+  }
   res.status(200).json({ petitions });
 });
 
@@ -14,7 +22,6 @@ const getPetition = asyncHandler(async (req, res) => {
 
 const addPetition = asyncHandler(async (req, res) => {
   const {
-    id,
     name,
     author,
     date,
@@ -26,7 +33,6 @@ const addPetition = asyncHandler(async (req, res) => {
   } = req.body;
 
   if (
-    !id ||
     !name ||
     !author ||
     !date ||
@@ -39,7 +45,6 @@ const addPetition = asyncHandler(async (req, res) => {
     throw new Error('Pass all fields');
   }
   const petition = await Petition.create({
-    //id,
     name,
     author,
     date,
@@ -64,14 +69,34 @@ const updatePetition = asyncHandler(async (req, res) => {
   const updatedPetition = await Petition.findByIdAndUpdate(id, req.body, {
     new: true,
   });
-  console.log(updatedPetition);
+
   res.status(200).json(updatedPetition);
 });
 
 const deletePetition = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const deletedPetition = await Petition.findByIdAndDelete(id);
-  res.status(200).json(deletedPetition);
+  const petition = await Petition.findById(id);
+  console.log(petition);
+  if (!petition) {
+    res.status(400);
+    throw new Error('Goal not found');
+  }
+
+  // Check for user
+  // if (!req.user) {
+  //   res.status(401)
+  //   throw new Error('User not found')
+  // }
+
+  // Make sure the logged in user matches the goal user
+  // if (petition.user.toString() !== req.user.id) {
+  //   res.status(401)
+  //   throw new Error('User not authorized')
+  // }
+
+  await Petition.findByIdAndDelete(id);
+
+  res.status(200).json({ id });
 });
 
 module.exports = {
