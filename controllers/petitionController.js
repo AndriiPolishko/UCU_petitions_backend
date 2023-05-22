@@ -16,7 +16,7 @@ const getPetitions = asyncHandler(async (req, res) => {
 
 const getPetition = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const petition = await Petition.find({ id });
+  const petition = await Petition.findById(id);
   res.status(200).json({ petition });
 });
 
