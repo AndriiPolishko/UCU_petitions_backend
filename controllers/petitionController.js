@@ -38,9 +38,7 @@ const addPetition = asyncHandler(async (req, res) => {
     !date ||
     !description ||
     !shortDescription ||
-    !votes ||
-    !votesNeeded ||
-    !voters
+    !votesNeeded
   ) {
     throw new Error('Pass all fields');
   }
