@@ -25,7 +25,17 @@ const petitionSchema = mongoose.Schema({
   },
   voters: [
     {
-      type: String,
+      id: {
+        type: Number,
+        required: [true, "Enter an Id"]
+      },
+      name: {
+        type: String,
+        required: [true, "Enter a name"]
+      },
+      email: {
+        type: String,
+      }
     },
   ],
 });
