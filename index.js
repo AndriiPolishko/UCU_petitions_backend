@@ -73,7 +73,6 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/error" }),
   function (req, res) {
-    console.log(req.user);
     const user = req.user;
     res.redirect(
       `${process.env.FRONTEND_URL}:${process.env.FRONTEND_PORT}/auth?id=${
